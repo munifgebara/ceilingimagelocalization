@@ -14,12 +14,22 @@ export const api = {
 
   listarLocais: () => fetch(`${BASE}/locais`).then(json),
 
+  obterLocal: (id) => fetch(`${BASE}/locais/${id}`).then(json),
+
   criarLocal: (dados) =>
     fetch(`${BASE}/locais`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados),
     }).then(json),
+
+  listarPlantas: (localId) => fetch(`${BASE}/locais/${localId}/plantas`).then(json),
+
+  obterPlanta: (plantaId) => fetch(`${BASE}/plantas/${plantaId}`).then(json),
+
+  // Envia a planta (multipart): arquivo SVG + nome + escala.
+  enviarPlanta: (localId, form) =>
+    fetch(`${BASE}/locais/${localId}/plantas`, { method: "POST", body: form }).then(json),
 
   // Envia uma foto de mapeamento (multipart).
   enviarFotoMapeamento: (form) =>

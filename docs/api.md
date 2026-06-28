@@ -2,8 +2,8 @@
 
 Base URL local: `http://localhost:8000`. Documentação interativa: `/docs`.
 
-> Esta é a especificação-alvo. Os endpoints são implementados ao longo dos marcos
-> M1–M3. O que já existe hoje (M0) é apenas `/saude`.
+> Esta é a especificação-alvo. **Já implementados (M0+M1):** `/saude`, `/locais*`
+> e `/plantas*`. Os demais (`/fotos`, `/localizar`) chegam nos marcos M2–M3.
 
 ## Saúde
 
