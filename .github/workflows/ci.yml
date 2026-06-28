@@ -1,7 +1,7 @@
 name: CI
 
 # Roda lint e testes do backend em cada push e Pull Request para a master.
-# Usa o runner self-hosted do gimli.
+# Usa runner hospedado do GitHub (gratis em repositorio publico).
 
 on:
   push:
@@ -12,38 +12,44 @@ on:
 jobs:
   backend:
     name: Backend (lint + testes)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: teto
+          POSTGRES_PASSWORD: teto
+          POSTGRES_DB: teto
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U teto"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
     steps:
-      - name: Baixar o código
+      - name: Baixar o codigo
         uses: actions/checkout@v4
 
-      - name: Subir Postgres de teste (pgvector)
-        run: |
-          docker rm -f teto-banco-ci 2>/dev/null || true
-          docker run -d --name teto-banco-ci \
-            -e POSTGRES_USER=teto -e POSTGRES_PASSWORD=teto -e POSTGRES_DB=teto \
-            -p 55432:5432 pgvector/pgvector:pg17
-          for i in $(seq 1 30); do
-            docker exec teto-banco-ci pg_isready -U teto && break || sleep 1
-          done
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Instalar dependências
+      - name: Instalar dependencias
         run: |
-          python3 -m venv .venv
-          . .venv/bin/activate
+          python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
       - name: Lint (ruff)
-        run: . .venv/bin/activate && ruff check .
+        run: ruff check .
 
       - name: Testes (pytest)
         env:
-          BANCO_URL: postgresql+psycopg://teto:teto@localhost:55432/teto
-        run: . .venv/bin/activate && pytest -q
-
-      - name: Limpar Postgres de teste
-        if: always()
-        run: docker rm -f teto-banco-ci 2>/dev/null || true
+          BANCO_URL: postgresql+psycopg://teto:teto@localhost:5432/teto
+        run: pytest -q
