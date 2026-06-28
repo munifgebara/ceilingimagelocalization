@@ -19,7 +19,7 @@ import math
 from pathlib import Path
 
 from reportlab.graphics.charts.barcharts import VerticalBarChart
-from reportlab.graphics.shapes import Drawing, Group, Line, Polygon, Rect, String
+from reportlab.graphics.shapes import Circle, Drawing, Group, Line, Polygon, Rect, String
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
@@ -124,6 +124,65 @@ def _cadeia(d, cx, top, passos, bw=210, bh=22, gap=12, fill=AZUL_CLARO, fcor=col
             _seta(d, cx, y - bh, y - bh - gap)
         y -= bh + gap
     return y
+
+
+AMARELO = colors.HexColor("#FBBF24")
+AMARELO_CLARO = colors.HexColor("#FEF3C7")
+
+
+def fig_conceito():
+    """Ilustracao didatica: o celular aponta para cima e fotografa o teto."""
+    W, H = CW, 210
+    d = Drawing(W, H)
+
+    # ----- teto (laje + estrutura + luminarias) na faixa superior
+    teto_y = H - 30
+    d.add(Rect(0, teto_y, W, 30, fillColor=colors.HexColor("#EEF2F7"), strokeColor=CINZA,
+               strokeWidth=0.8))
+    # malha leve do forro
+    for gx in range(1, 6):
+        x = gx * W / 6
+        d.add(Line(x, teto_y, x, H, strokeColor=CINZA_CLARO, strokeWidth=0.5))
+    d.add(Line(0, teto_y + 15, W, teto_y + 15, strokeColor=CINZA_CLARO, strokeWidth=0.5))
+    # luminarias acesas
+    for lx in (0.18, 0.40, 0.62, 0.84):
+        x = lx * W
+        d.add(Rect(x - 16, teto_y + 9, 32, 12, rx=3, ry=3, fillColor=AMARELO,
+                   strokeColor=colors.HexColor("#D97706"), strokeWidth=0.8))
+    d.add(String(W / 2, H - 9, "TETO  ·  luminárias e estrutura (referência visual estável)",
+                 textAnchor="middle", fontName=FONTE_B, fontSize=7, fillColor=AZUL))
+
+    # ----- celular apontado para cima (parte inferior)
+    pw, ph = 50, 86
+    px, py = W / 2 - pw / 2, 14
+    cam_x, cam_y = W / 2, py + ph  # camera no topo do aparelho
+    # campo de visao (cone) da camera ate o teto
+    cone = Polygon([cam_x, cam_y, W * 0.20, teto_y, W * 0.80, teto_y],
+                   fillColor=AZUL_CLARO, strokeColor=AZUL_CLARO, strokeWidth=0.7)
+    cone.fillOpacity = 0.10
+    cone.strokeDashArray = [3, 2]
+    d.add(cone)
+    # seta "para cima"
+    _seta(d, W / 2, py + ph + 6, teto_y - 4)
+    d.add(String(W / 2 + 8, (cam_y + teto_y) / 2, "aponta", textAnchor="start",
+                 fontName=FONTE, fontSize=6.5, fillColor=AZUL_CLARO))
+
+    # corpo do celular
+    d.add(Rect(px, py, pw, ph, rx=8, ry=8, fillColor=AZUL, strokeColor=AZUL))
+    # tela: previa da foto do teto (luminarias)
+    sx, sy, sw, sh = px + 4, py + 8, pw - 8, ph - 18
+    d.add(Rect(sx, sy, sw, sh, rx=3, ry=3, fillColor=colors.HexColor("#1E293B"),
+               strokeColor=colors.white, strokeWidth=0.5))
+    for ly in (0.30, 0.62):
+        d.add(Rect(sx + sw * 0.22, sy + sh * ly, sw * 0.56, sh * 0.16, rx=2, ry=2,
+                   fillColor=AMARELO_CLARO, strokeColor=AMARELO))
+    # camera + botao
+    d.add(Circle(cam_x, py + ph - 4, 2.4, fillColor=colors.white, strokeColor=AZUL))
+    d.add(Circle(W / 2, py + 4, 2.2, fillColor=colors.white, strokeColor=colors.white))
+    d.add(String(W / 2, py - 9, "Celular fotografa o teto  +  GPS aproximado",
+                 textAnchor="middle", fontName=FONTE_B, fontSize=7, fillColor=VERDE))
+
+    return d
 
 
 def fig_arquitetura():
@@ -286,7 +345,7 @@ def construir() -> Path:
     FOOT = 1.4 * cm
     usable = PW - 2 * M
     colw = (usable - GUT) / 2
-    header_h = 8.6 * cm
+    header_h = 11.6 * cm
 
     header = Frame(M, PH - M - header_h, usable, header_h, id="cab",
                    leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
@@ -354,9 +413,15 @@ def construir() -> Path:
     e.append(par(
         "Este trabalho explora usar o <b>teto</b> como referência. Tetos são visualmente estáveis, "
         "raramente ocluídos por pessoas e têm iluminação mais uniforme, tornando-os âncoras visuais "
-        "confiáveis. A Figura 1 mostra a arquitetura geral do sistema."))
+        "confiáveis. A ideia, ilustrada na Figura 1, é simples: o usuário aponta o celular para cima, "
+        "fotografa o teto e fornece um GPS aproximado; o sistema devolve a posição na planta baixa."))
+    e.append(figura(fig_conceito(),
+                    "Figura 1. Conceito: o celular é apontado para cima e fotografa o teto "
+                    "(luminárias e estrutura); a foto, com o GPS aproximado, alimenta a estimativa "
+                    "de posição."))
+    e.append(par("A Figura 2 mostra a arquitetura geral do sistema."))
     e.append(figura(fig_arquitetura(),
-                    "Figura 1. Arquitetura: três PWAs consomem a API, que persiste dados e "
+                    "Figura 2. Arquitetura: três PWAs consomem a API, que persiste dados e "
                     "embeddings no PostgreSQL e as imagens em volume."))
 
     # ------------------------------------------------------------------ 2 Hipotese
@@ -365,9 +430,9 @@ def construir() -> Path:
         "<b>Hipótese.</b> Dada uma planta baixa e uma base de fotografias do teto rotuladas com a "
         "posição em que foram tiradas, é possível estimar a posição de uma nova fotografia do teto "
         "sobre a planta, usando o GPS apenas como filtro grosseiro e a imagem como discriminador "
-        "fino. A Figura 2 resume as duas fases de operação."))
+        "fino. A Figura 3 resume as duas fases de operação."))
     e.append(figura(fig_fases(),
-                    "Figura 2. As duas fases: mapeamento (coleta rotulada) e consulta (estimativa "
+                    "Figura 3. As duas fases: mapeamento (coleta rotulada) e consulta (estimativa "
                     "da posição)."))
     e.append(par("<b>Objetivos:</b>"))
     e.append(lista([
@@ -400,19 +465,19 @@ def construir() -> Path:
     e.append(Paragraph("4. Arquitetura e método", H1))
     e.append(Paragraph("4.1 Pipeline de localização", H2))
     e.append(par(
-        "A consulta percorre quatro etapas encadeadas (Figura 3): filtro geográfico, busca por "
+        "A consulta percorre quatro etapas encadeadas (Figura 4): filtro geográfico, busca por "
         "similaridade, verificação geométrica opcional e interpolação da posição."))
     e.append(figura(fig_pipeline(),
-                    "Figura 3. Pipeline de localização: do par foto+GPS à posição estimada."))
+                    "Figura 4. Pipeline de localização: do par foto+GPS à posição estimada."))
 
     e.append(Paragraph("4.2 Modelo de dados", H2))
     e.append(par(
-        "Três entidades (Figura 4): <b>local</b> (o ambiente), <b>planta</b> (SVG com escala em "
+        "Três entidades (Figura 5): <b>local</b> (o ambiente), <b>planta</b> (SVG com escala em "
         "metros por unidade) e <b>foto</b> (imagem do teto com GPS, posição na planta, embedding e "
         "tipo). Um índice GiST sobre <font face='Courier'>ll_to_earth(lat, lon)</font> sustenta o "
         "filtro por raio e um índice HNSW sobre o embedding sustenta a busca por similaridade."))
     e.append(figura(fig_modelo(),
-                    "Figura 4. Modelo de dados e cardinalidades."))
+                    "Figura 5. Modelo de dados e cardinalidades."))
 
     e.append(Paragraph("4.3 Formalização", H2))
     e.append(par(
@@ -471,7 +536,7 @@ def construir() -> Path:
         "um padrão visual distinto. Para cada posição, gera-se uma consulta a partir da mesma imagem "
         "perturbada com ruído gaussiano (σ = 18) e variação de brilho (+20), simulando recaptura. O "
         "erro é a distância à posição verdadeira, convertida em metros pela escala (Tabela 1, "
-        "Figura 5)."))
+        "Figura 6)."))
 
     dados = [
         ["Métrica", "Unid.", "Metros"],
@@ -498,7 +563,7 @@ def construir() -> Path:
     grafico = fig_grafico_erro()
     if grafico is not None:
         e.append(figura(grafico,
-                        "Figura 5. Erro de localização por posição mapeada; todas abaixo do "
+                        "Figura 6. Erro de localização por posição mapeada; todas abaixo do "
                         "limiar de 2 m."))
     e.append(par(
         "O sistema localizou corretamente todas as consultas dentro de 2 m, com erro mediano de "
