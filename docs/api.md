@@ -2,8 +2,9 @@
 
 Base URL local: `http://localhost:8000`. Documentação interativa: `/docs`.
 
-> Esta é a especificação-alvo. **Já implementados (M0–M2):** `/saude`, `/locais*`,
-> `/plantas*` e `/fotos*`. Falta `/localizar` (M3).
+> **Implementados (M0–M3):** `/saude`, `/locais*`, `/plantas*`, `/fotos*` e
+> `/localizar`. A verificação geométrica (RANSAC) ativa quando o extra `[ia]`
+> (OpenCV) está instalado; sem ele, o ranqueamento usa só os embeddings.
 
 ## Saúde
 

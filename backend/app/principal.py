@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.api import fotos, locais, plantas, saude
+from app.api import fotos, locais, localizacao, plantas, saude
 
 app = FastAPI(
     title="Localizacao Indoor por Imagens do Teto",
@@ -24,6 +24,7 @@ app.include_router(saude.roteador)
 app.include_router(locais.roteador)
 app.include_router(plantas.roteador)
 app.include_router(fotos.roteador)
+app.include_router(localizacao.roteador)
 
 
 @app.get("/", tags=["raiz"])
