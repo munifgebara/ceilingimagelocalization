@@ -33,6 +33,9 @@ spec:
                 secretKeyRef:
                   name: teto-banco
                   key: BANCO_URL
+          volumeMounts:
+            - name: fotos
+              mountPath: /dados
           readinessProbe:
             httpGet:
               path: /saude
@@ -52,3 +55,7 @@ spec:
             limits:
               cpu: "1"
               memory: 1Gi
+      volumes:
+        - name: fotos
+          persistentVolumeClaim:
+            claimName: teto-fotos

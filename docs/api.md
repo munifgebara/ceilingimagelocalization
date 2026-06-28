@@ -2,8 +2,8 @@
 
 Base URL local: `http://localhost:8000`. Documentação interativa: `/docs`.
 
-> Esta é a especificação-alvo. **Já implementados (M0+M1):** `/saude`, `/locais*`
-> e `/plantas*`. Os demais (`/fotos`, `/localizar`) chegam nos marcos M2–M3.
+> Esta é a especificação-alvo. **Já implementados (M0–M2):** `/saude`, `/locais*`,
+> `/plantas*` e `/fotos*`. Falta `/localizar` (M3).
 
 ## Saúde
 
