@@ -41,7 +41,7 @@ Há uma skill que automatiza isso: **`nova-tarefa`** (`.claude/skills/nova-taref
 
 ## Ambiente / Infra
 
-- **Repositório remoto**: `https://github.com/munifgebara/celingimagelocalization`
+- **Repositório remoto**: `https://github.com/munifgebara/ceilingimagelocalization`
   (branch base: `master`).
 - **Servidor de deploy (gimli)**: `192.168.0.99`, acesso via `ssh munif@192.168.0.99`.
   - Kubernetes **k3s** (single node). `kubectl` exige `sudo` (`sudo -n kubectl ...`).

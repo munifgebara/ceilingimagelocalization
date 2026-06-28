@@ -4,7 +4,7 @@
 set -euo pipefail
 
 GIMLI="${GIMLI_USER:-munif}@${GIMLI_HOST:-192.168.0.99}"
-REPO="https://github.com/munifgebara/celingimagelocalization.git"
+REPO="https://github.com/munifgebara/ceilingimagelocalization.git"
 DIR="~/apps/teto"
 NS="teto"
 
