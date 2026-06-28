@@ -12,6 +12,8 @@ dependencies = [
     "pydantic-settings>=2.6",
     "pgvector>=0.3",
     "python-multipart>=0.0.12",
+    "numpy>=2.0",
+    "pillow>=11.0",
 ]
 
 [project.optional-dependencies]
@@ -20,13 +22,12 @@ dev = [
     "httpx>=0.27",
     "ruff>=0.7",
 ]
-# Dependências pesadas de visão computacional / IA (instaladas só quando necessário).
+# Dependências pesadas de visão computacional / IA (backend forte de embeddings e
+# verificação geométrica). Instaladas só quando necessário.
 ia = [
     "torch>=2.4",
     "torchvision>=0.19",
     "opencv-python-headless>=4.10",
-    "numpy>=2.0",
-    "pillow>=11.0",
 ]
 
 [build-system]

@@ -4,13 +4,20 @@ Os testes que dependem do banco usam um Postgres real (com pgvector). Se o banco
 nao estiver acessivel (ex.: ambiente local sem docker), esses testes sao pulados.
 """
 
-import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import text
+import os
+import tempfile
 
-import app.banco.modelos  # noqa: F401 -- registra os modelos no metadata
-from app.banco.sessao import Base, engine
-from app.principal import app
+# Grava as imagens dos testes em um diretorio temporario (antes de importar a app,
+# pois a configuracao e lida/cacheada na importacao).
+os.environ.setdefault("DIRETORIO_FOTOS", tempfile.mkdtemp(prefix="teto-fotos-"))
+
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+from sqlalchemy import text  # noqa: E402
+
+import app.banco.modelos  # noqa: F401,E402 -- registra os modelos no metadata
+from app.banco.sessao import Base, engine  # noqa: E402
+from app.principal import app  # noqa: E402
 
 
 def _banco_disponivel() -> bool:

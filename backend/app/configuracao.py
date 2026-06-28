@@ -23,6 +23,9 @@ class Configuracao(BaseSettings):
     # Quantidade de candidatos retornados pela busca por similaridade.
     candidatos_topn: int = 20
 
+    # Diretorio onde as imagens das fotos sao gravadas.
+    diretorio_fotos: str = "dados/fotos"
+
 
 @lru_cache
 def obter_configuracao() -> Configuracao:
