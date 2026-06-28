@@ -253,16 +253,29 @@ def construir() -> Path:
 
     slide_topicos(
         prs,
-        "Status atual — M0 concluído ✓",
+        "Status atual — M0 a M4 concluídos ✓",
         [
-            "Repositório, estrutura e documentação (em português) prontos.",
-            "Backend FastAPI no ar no gimli: /saude → banco 'ok'.",
-            "Banco 'teto' criado com extensões vector, cube, earthdistance.",
-            "Tabelas local, planta, foto + índices (HNSW, GiST) via migração Alembic.",
-            "Apps Vue (admin, coletor, teste) com estrutura e integração câmera/GPS.",
-            ("Acessível em teto.local (Traefik); Cloudflare Tunnel a configurar.", 1),
+            "API completa no ar no gimli: /saude, /locais, /plantas, /fotos, /localizar.",
+            "Banco 'teto' com pgvector + earthdistance; tabelas e índices via Alembic.",
+            "Coleta grava foto + GPS + (x,y) + embedding; consulta retorna (x,y) + confiança.",
+            "Apps Vue (admin, coletor, teste) integrados com câmera, GPS e planta.",
+            "CI no ar (GitHub Actions) com lint + testes; deploy automatizado por script.",
+            ("Pendente: expor via Cloudflare Tunnel (depende do painel Cloudflare).", 1),
         ],
         cor_titulo=VERDE,
+    )
+
+    slide_tabela(
+        prs,
+        "Avaliação inicial (cenário sintético)",
+        ["Métrica", "Valor"],
+        [
+            ["Posições mapeadas", "25 (planta de ~50 m)"],
+            ["Erro mediano", "~0,6 m"],
+            ["Erro máximo", "~0,95 m"],
+            ["Taxa de acerto (≤ 2 m)", "100%"],
+            ["Backend de embedding", "tiny-image (512-d); DINOv2 plugável (M+)"],
+        ],
     )
 
     slide_tabela(
@@ -271,14 +284,18 @@ def construir() -> Path:
         ["Marco", "Entrega"],
         [
             ["M0 ✓", "Fundação: infra, API de saúde, banco e deploy no gimli"],
-            ["M1", "Cadastro: API + Admin (criar local, upload da planta SVG)"],
-            ["M2", "Coleta: Coletor grava foto + GPS + (x,y) + embedding"],
-            ["M3", "Localização: endpoint de consulta + Teste mostra o ponto"],
-            ["M4", "Avaliação: métricas de erro (metros) e ajuste do modelo"],
+            ["M1 ✓", "Cadastro: API + Admin (criar local, upload da planta SVG)"],
+            ["M2 ✓", "Coleta: Coletor grava foto + GPS + (x,y) + embedding"],
+            ["M3 ✓", "Localização: endpoint de consulta + Teste mostra o ponto"],
+            ["M4 ✓", "Avaliação: métricas de erro (metros) e relatório"],
         ],
     )
 
-    slide_secao(prs, "Obrigado!  Próximo passo: M1 — Cadastro de locais e plantas", cor=AZUL_CLARO)
+    slide_secao(
+        prs,
+        "Obrigado!  Próximos passos: Cloudflare Tunnel, embeddings fortes e dados reais",
+        cor=AZUL_CLARO,
+    )
 
     saida = Path(__file__).parent / "Localizacao-Indoor-Teto.pptx"
     prs.save(saida)
