@@ -14,7 +14,7 @@ ssh "$GIMLI" "mkdir -p ~/apps && (test -d ~/apps/teto && cd ~/apps/teto && git p
 echo ">> 2/6 Garantindo banco 'teto' e extensoes no Postgres compartilhado"
 ssh "$GIMLI" 'bash -s' <<"REMOTO"
 set -e
-PGUSER=$(sudo -n kubectl get secret -n platform postgres-secret -o jsonpath="{.data.POSTGRES_USER}" | base64 -d)
+PGUSER=postgres
 sudo -n kubectl exec -n platform postgres-0 -- sh -c "psql -U $PGUSER -d postgres -tAc \"SELECT 1 FROM pg_database WHERE datname='teto'\" | grep -q 1 || psql -U $PGUSER -d postgres -c 'CREATE DATABASE teto'"
 sudo -n kubectl exec -n platform postgres-0 -- sh -c "psql -U $PGUSER -d teto -c 'CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS cube; CREATE EXTENSION IF NOT EXISTS earthdistance;'"
 REMOTO
@@ -26,8 +26,8 @@ echo ">> 4/6 Aplicando namespace + secret + manifestos"
 ssh "$GIMLI" 'bash -s' <<"REMOTO"
 set -e
 sudo -n kubectl apply -f ~/apps/teto/deploy/k8s/namespace.yaml
-PGUSER=$(sudo -n kubectl get secret -n platform postgres-secret -o jsonpath="{.data.POSTGRES_USER}" | base64 -d)
-PGPASS=$(sudo -n kubectl get secret -n platform postgres-secret -o jsonpath="{.data.POSTGRES_PASSWORD}" | base64 -d)
+PGUSER=postgres
+PGPASS=$(sudo -n kubectl get secret -n platform postgres-secret -o jsonpath="{.data.postgres-password}" | base64 -d)
 URL="postgresql+psycopg://$PGUSER:$PGPASS@postgres.platform.svc.cluster.local:5432/teto"
 sudo -n kubectl -n teto create secret generic teto-banco --from-literal=BANCO_URL="$URL" --dry-run=client -o yaml | sudo -n kubectl apply -f -
 sudo -n kubectl apply -k ~/apps/teto/deploy/k8s
