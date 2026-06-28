@@ -1,19 +1,13 @@
 """Endpoint de saude (healthcheck)."""
 
-from typing import Annotated
-
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from sqlalchemy import text
-from sqlalchemy.orm import Session
 
 from app import __version__
-from app.banco.sessao import obter_sessao
+from app.api.dependencias import SessaoBanco
 from app.esquemas import RespostaSaude
 
 roteador = APIRouter()
-
-# Sessao do banco injetada por requisicao.
-SessaoBanco = Annotated[Session, Depends(obter_sessao)]
 
 
 @roteador.get("/saude", response_model=RespostaSaude, tags=["saude"])
