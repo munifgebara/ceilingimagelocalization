@@ -31,3 +31,6 @@ migrar:  ## Aplica as migrações do banco
 
 deploy-gimli:  ## Faz o deploy no gimli (ver docs/deploy.md)
 	bash deploy/scripts/deploy-gimli.sh
+
+avaliar:  ## Roda a avaliacao de precisao (API precisa estar no ar)
+	cd backend && python avaliacao/avaliar.py --n 25
