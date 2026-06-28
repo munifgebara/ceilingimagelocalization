@@ -4,7 +4,7 @@
 > hospital) a partir de uma **foto do teto** e um GPS aproximado, retornando uma
 > coordenada `(x, y)` sobre a planta baixa do local.
 
-[![CI](https://github.com/munifgebara/celingimagelocalization/actions/workflows/ci.yml/badge.svg)](https://github.com/munifgebara/celingimagelocalization/actions/workflows/ci.yml)
+[![CI](https://github.com/munifgebara/ceilingimagelocalization/actions/workflows/ci.yml/badge.svg)](https://github.com/munifgebara/ceilingimagelocalization/actions/workflows/ci.yml)
 
 ## Por que o teto?
 

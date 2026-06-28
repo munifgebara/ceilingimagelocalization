@@ -20,7 +20,7 @@ ficam em `deploy/k8s/`.
    ```bash
    ssh munif@192.168.0.99 'cd ~/apps && \
      (test -d teto && cd teto && git pull) || \
-     git clone https://github.com/munifgebara/celingimagelocalization.git teto'
+     git clone https://github.com/munifgebara/ceilingimagelocalization.git teto'
    ```
 
 2. **Construir e importar a imagem da API** no k3s:
