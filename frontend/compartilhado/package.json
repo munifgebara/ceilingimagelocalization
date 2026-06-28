@@ -1,0 +1,14 @@
+{
+  "name": "@teto/compartilhado",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Codigo comum dos apps (camera, GPS, cliente HTTP, planta SVG)",
+  "main": "index.js",
+  "exports": {
+    "./camera": "./camera.js",
+    "./gps": "./gps.js",
+    "./api": "./api.js",
+    "./planta": "./planta.js"
+  }
+}

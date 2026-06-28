@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh repo view:*)",
+      "Bash(docker compose:*)",
+      "Bash(make:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(ruff:*)",
+      "Bash(alembic:*)",
+      "Bash(ssh munif@192.168.0.99:*)",
+      "Bash(scp:*)"
+    ],
+    "deny": []
+  },
+  "env": {
+    "PROJETO_NAMESPACE": "teto",
+    "GIMLI_HOST": "192.168.0.99",
+    "GIMLI_USER": "munif"
+  }
+}

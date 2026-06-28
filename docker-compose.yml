@@ -1,0 +1,40 @@
+# Ambiente de desenvolvimento local.
+# Sobe um Postgres com pgvector (mesma imagem do cluster) + a API.
+services:
+  banco:
+    image: pgvector/pgvector:pg17
+    container_name: teto-banco
+    environment:
+      POSTGRES_USER: teto
+      POSTGRES_PASSWORD: teto
+      POSTGRES_DB: teto
+    ports:
+      - "5432:5432"
+    volumes:
+      - dados_banco:/var/lib/postgresql/data
+      # As extensões (vector, cube, earthdistance) são criadas pela migração inicial.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teto -d teto"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    container_name: teto-api
+    depends_on:
+      banco:
+        condition: service_healthy
+    environment:
+      BANCO_URL: postgresql+psycopg://teto:teto@banco:5432/teto
+      AMBIENTE: desenvolvimento
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.principal:app --host 0.0.0.0 --port 8000 --reload"
+
+volumes:
+  dados_banco:

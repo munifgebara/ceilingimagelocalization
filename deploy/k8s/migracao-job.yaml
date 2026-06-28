@@ -1,0 +1,24 @@
+# Job que aplica as migracoes do banco (alembic upgrade head).
+# Reaplicado pelo script de deploy (apagado e recriado a cada deploy).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: teto-migracao
+  namespace: teto
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migracao
+          image: teto-api:latest
+          imagePullPolicy: IfNotPresent
+          command: ["alembic", "upgrade", "head"]
+          env:
+            - name: BANCO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: teto-banco
+                  key: BANCO_URL

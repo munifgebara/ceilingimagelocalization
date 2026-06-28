@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: teto-api
+  namespace: teto
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: teto.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: teto-api
+                port:
+                  number: 8000

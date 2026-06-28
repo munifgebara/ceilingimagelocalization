@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: teto-config
+  namespace: teto
+data:
+  AMBIENTE: "producao"
+  DIMENSAO_EMBEDDING: "512"
+  RAIO_GPS_PADRAO_M: "50"
+  CANDIDATOS_TOPN: "20"

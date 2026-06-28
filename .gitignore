@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Node / Vue
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Modelos de IA baixados / pesos
+*.pt
+*.pth
+*.onnx
+modelos/cache/
+
+# Uploads locais / dados
+dados/
+uploads/
+*.sqlite
+
+# Claude Code (config local da maquina, nao versionar)
+.claude/settings.local.json
+
+# Editores / SO
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Segredos (nunca commitar)
+*-secret.yaml
+deploy/k8s/secrets/*.yaml
+!deploy/k8s/secrets/*.exemplo.yaml

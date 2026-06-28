@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teto-api
+  namespace: teto
+  labels:
+    app: teto-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: teto-api
+  template:
+    metadata:
+      labels:
+        app: teto-api
+    spec:
+      containers:
+        - name: api
+          image: teto-api:latest
+          # Imagem importada no containerd do k3s (sem registry externo).
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: teto-config
+            - secretRef:
+                name: teto-banco
+          env:
+            - name: BANCO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: teto-banco
+                  key: BANCO_URL
+          readinessProbe:
+            httpGet:
+              path: /saude
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /saude
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

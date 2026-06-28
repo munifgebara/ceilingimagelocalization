@@ -1,0 +1,41 @@
+# Exposicao externa via Cloudflare Tunnel (segue o padrao dos outros apps do cluster).
+# Pre-requisito: criar o secret com o token do tunnel:
+#   sudo -n kubectl -n teto create secret generic cloudflared-teto-token \
+#     --from-literal=TUNNEL_TOKEN=<token-da-cloudflare>
+# E configurar, no painel da Cloudflare, o hostname publico apontando para:
+#   http://teto-api.teto.svc.cluster.local:8000
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared-teto
+  namespace: teto
+  labels:
+    app: cloudflared-teto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflared-teto
+  template:
+    metadata:
+      labels:
+        app: cloudflared-teto
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:latest
+          imagePullPolicy: Always
+          args: ["tunnel", "--no-autoupdate", "run", "--token", "$(TUNNEL_TOKEN)"]
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflared-teto-token
+                  key: TUNNEL_TOKEN
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
