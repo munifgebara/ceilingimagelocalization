@@ -42,3 +42,4 @@ uploads/
 *-secret.yaml
 deploy/k8s/secrets/*.yaml
 !deploy/k8s/secrets/*.exemplo.yaml
+.venv-artigo/
