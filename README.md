@@ -24,7 +24,8 @@ recognition*) do que fotos tiradas na altura dos olhos.
    - **confirma a geometria** com casamento de pontos (features locais + RANSAC);
    - **interpola** a posição `(x, y)` na planta e devolve com um nível de confiança.
 
-Veja os detalhes em [`ARCHITECTURE.md`](ARCHITECTURE.md).
+Veja os detalhes em [`ARCHITECTURE.md`](ARCHITECTURE.md) e o **artigo completo**
+em [`docs/artigo/Localizacao-Indoor-Teto.pdf`](docs/artigo/Localizacao-Indoor-Teto.pdf).
 
 ## Componentes
 
