@@ -62,6 +62,7 @@ def main() -> None:
     p.add_argument("--brilho", type=float, default=20.0, help="variacao de brilho na consulta")
     p.add_argument("--escala", type=float, default=0.05, help="metros por unidade da planta")
     p.add_argument("--limiar-m", type=float, default=2.0, help="limiar de acerto em metros")
+    p.add_argument("--saida-json", type=str, default=None, help="grava os erros brutos em JSON")
     args = p.parse_args()
 
     cliente = httpx.Client(base_url=BASE_URL, headers=HEADERS, timeout=30)
@@ -137,6 +138,33 @@ Gerado em {datetime.now(UTC).isoformat(timespec="seconds")} (UTC).
     saida.write_text(relatorio, encoding="utf-8")
     print(relatorio)
     print(f"Relatorio salvo em: {saida}")
+
+    if args.saida_json:
+        import json
+
+        destino = Path(args.saida_json)
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text(
+            json.dumps(
+                {
+                    "n": n,
+                    "escala": args.escala,
+                    "limiar_m": args.limiar_m,
+                    "sigma": args.sigma,
+                    "brilho": args.brilho,
+                    "erros_unidades": [round(e, 3) for e in erros_unidades],
+                    "erros_m": [round(e, 4) for e in erros_m],
+                    "mediana_m": round(statistics.median(erros_m), 4),
+                    "media_m": round(statistics.mean(erros_m), 4),
+                    "max_m": round(max(erros_m), 4),
+                    "acerto_pct": round(100 * acertos / n, 1),
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        print(f"Dados salvos em: {destino}")
 
 
 if __name__ == "__main__":
